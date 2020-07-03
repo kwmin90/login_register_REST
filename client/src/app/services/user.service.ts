@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,13 +8,15 @@ import { Router } from '@angular/router';
 export class UserService {
   private uri = 'http://localhost:3000';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient) { }
 
-  findUser(){
-    return this.http.get<User>(`${this.uri}/api/users`);
+  findUser() {
+    return this.http.get(`${this.uri}/api/user`);
   }
-  register(user: User){
-    return this.http.post<any>(`${this.uri}/api/register`, user);
-    
+  register(user: User) {
+    return this.http.post(`${this.uri}/api/register`, user).subscribe();
+  }
+  capitalizeFirstLetter(x: string) {
+    return x.charAt(0).toUpperCase() + x.slice(1);
   }
 }

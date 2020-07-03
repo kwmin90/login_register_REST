@@ -1,3 +1,6 @@
 <div class="container">
-    <h4>Signed in as </h4>
-</div>>
+    <div *ngIf="user">
+        <h4>Signed in as {{user && user.firstName}} {{user && user.lastName}}</h4>
+        <h4>Email is: {{user && user.email}}</h4>
+    </div>
+</div>

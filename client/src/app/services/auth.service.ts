@@ -19,7 +19,10 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { 
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
-    if(localStorage.getItem('currentUser')!=null)this.loggedIn.next(true);
+    if(localStorage.getItem('currentUser')!=null){
+      this.loggedIn.next(true);
+      this.loggedOut.next(false);
+    }
   }
 
   login(user: User):Observable<any> {
@@ -38,11 +41,22 @@ export class AuthService {
           return user;
         }));
   }
+  refresh(): Observable<any>{
+    return this.http.get(`${this.uri}/api/refresh_token`)
+      .pipe(
+        map(refreshToken =>{
+          if(refreshToken){
+            const token = JSON.parse(JSON.stringify(refreshToken));
+            localStorage.setItem('id_token',JSON.stringify(token.idToken));
+          }else return false;
+        }));
+  }
   logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('id_token');
     this.loggedIn.next(false);
     this.loggedOut.next(true);
+    this.currentUserSubject.next(null);
     this.router.navigate(['/']);
   }
   get isLoggedIn() {
