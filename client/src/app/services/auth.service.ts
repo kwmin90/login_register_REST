@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from './../models/user.model';
-import { map } from 'rxjs/operators';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -25,32 +24,31 @@ export class AuthService {
     }
   }
 
-  login(user: User):Observable<any> {
-    return this.http.post<any>(`${this.uri}/api/login`, user)
-      .pipe(
-        map(user =>{
-          if(user && user.idToken){
-            localStorage.setItem('currentUser', JSON.stringify(user.email));
-            localStorage.setItem('id_token', JSON.stringify(user.idToken)); 
-            this.currentUserSubject.next(user);
-            this.loggedIn.next(true);
-            this.loggedOut.next(false);
-          }else{
-            return false;
-          }
-          return user;
-        }));
+  login(email: string, password: string) {
+    return this.http.post(`${this.uri}/api/login`, {email, password})
+    .subscribe((result)=>{
+      const token = JSON.parse(JSON.stringify(result));
+      if(token.idToken && token.data){
+        localStorage.setItem('currentUser', JSON.stringify(token.data.email));
+          localStorage.setItem('id_token', JSON.stringify(token.idToken)); 
+          this.currentUserSubject.next(token.data);
+          this.loggedIn.next(true);
+          this.loggedOut.next(false);
+      }else{
+        return false;
+      }
+      return true;
+    });
   }
-  refresh(): Observable<any>{
+  refresh(){
     return this.http.get(`${this.uri}/api/refresh_token`)
-      .pipe(
-        map(refreshToken =>{
-          if(refreshToken){
-            const token = JSON.parse(JSON.stringify(refreshToken));
-            localStorage.setItem('id_token',JSON.stringify(token.idToken));
-          }else return false;
-        }));
-  }
+    .subscribe((result)=>{
+      const data = JSON.parse(JSON.stringify(result));
+      if(data.idToken){
+        localStorage.setItem('id_token', JSON.stringify(data.idToken));
+      }else return false;
+    });
+}
   logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('id_token');

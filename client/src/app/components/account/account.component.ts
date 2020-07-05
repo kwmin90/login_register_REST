@@ -23,10 +23,7 @@ export class AccountComponent implements OnInit {
         this.user.firstName = this.userService.capitalizeFirstLetter(this.user.firstName);
         this.user.lastName = this.userService.capitalizeFirstLetter(this.user.lastName);
       });
-      this.getRefreshToken();
-  }
-  getRefreshToken(){
-    this.authService.refresh().subscribe();
+      this.authService.refresh();
   }
 
 }

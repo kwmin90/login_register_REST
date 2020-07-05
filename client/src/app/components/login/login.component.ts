@@ -21,10 +21,8 @@ export class LoginComponent {
   login() {
     const val = this.form.value;
     if (val.email && val.password) {
-      this.authService.login(val)
-        .subscribe(() => {
-          this.router.navigate(['/account']);
-        });
+      this.authService.login(val.email, val.password)
     }
+    this.router.navigate(['/']);
   }
 }

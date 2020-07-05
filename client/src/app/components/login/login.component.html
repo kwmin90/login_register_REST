@@ -1,7 +1,7 @@
 <div class="container">
     <h2>Login</h2>
 
-    <form [formGroup]="form">
+    <form [formGroup]="form" (ngSubmit)="login()">
         <fieldset>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -15,7 +15,7 @@
             </div>
         </fieldset>
         <div class="form-group">
-            <button class="btn btn-primary" (click)="login()" type="submit">Log In</button>
+            <button class="btn btn-primary" type="submit">Log In</button>
             <a routerLink="/" class="btn btn-link">Cancel</a>
         </div>
     </form>

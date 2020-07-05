@@ -7,7 +7,7 @@ const RSA_PUBLIC_KEY = fs.readFileSync('./public.key');
 
 export async function user(req: Request, res: Response){
     const authorization = req.header('Authorization');
-    if (!authorization) return null;
+    if (!authorization) throw new Error("Not authorized");
 
     try{
         const token = authorization.split(" ")[1];

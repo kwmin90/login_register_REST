@@ -14,7 +14,7 @@ export async function refreshToken(req: Request, res: Response){
         const token = authorization.split (" ")[1];
         const payload: any = verify(token, RSA_PUBLIC_KEY);
         const user = await User.findOne(payload.userId);
-        if(!user) return res.send({ok: false, idToken: ""});
+        if(!user) return null;
         const refresh_token = sign({userId: user.id}, RSA_PRIVATE_KEY,{
             algorithm: 'RS256',
             expiresIn: '7d'

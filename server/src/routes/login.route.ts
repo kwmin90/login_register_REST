@@ -12,20 +12,25 @@ export async function login(req: Request, res: Response){
 
     const user = await User.findOne({where: {email}})
 
-    if(!user) return res.send({ok: false, message: "Could not find user"});
-
+    if(!user) throw new Error("Could not find user");
     const valid = await compare(password, user.password);
 
-    if(!valid) return res.send({ok: false, message: "Wrong password"});
+    if(!valid) throw new Error("Wrong Password");
 
     const jwtBearerToken = sign({userId: user.id}, RSA_PRIVATE_KEY,{
         algorithm: 'RS256',
         expiresIn: '15m'
     });
 
+    const data = {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName      
+    }
+
     return res.status(200).json({
         idToken: jwtBearerToken,
-        email
+        data
     });
 }
 
